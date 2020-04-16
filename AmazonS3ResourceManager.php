@@ -8,6 +8,7 @@ namespace dosamigos\resourcemanager;
 
 use Aws\S3\Enum\CannedAcl;
 use Aws\S3\S3Client;
+use Aws\Credentials\Credentials;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 use Guzzle\Service\Client;
 use yii\base\Component;
@@ -130,8 +131,7 @@ class AmazonS3ResourceManager extends Component implements ResourceManagerInterf
 	{
 		if ($this->_client === null) {
 			$this->_client = S3Client::factory([
-				'key' => $this->key,
-				'secret' => $this->secret
+				'credentials' => new Credentials($this->key, $this->secret),
 			]);
 		}
 		return $this->_client;
