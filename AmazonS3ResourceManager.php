@@ -36,6 +36,14 @@ class AmazonS3ResourceManager extends Component implements ResourceManagerInterf
 	 */
 	public $secret;
 	/**
+	 * @var string Amazon region
+	 */
+	public $region;
+	/**
+	 * @var string Amazon version
+	 */
+	public $version;
+	/**
 	 * @var string Amazon Bucket
 	 */
 	public $bucket;
@@ -49,7 +57,7 @@ class AmazonS3ResourceManager extends Component implements ResourceManagerInterf
 	 */
 	public function init()
 	{
-		foreach (['key', 'secret', 'bucket'] as $attribute) {
+		foreach (['key', 'secret', 'bucket', 'region', 'version'] as $attribute) {
 			if ($this->$attribute === null) {
 				throw new InvalidConfigException(strtr('"{class}::{attribute}" cannot be empty.', [
 					'{class}' => static::className(),
@@ -75,7 +83,7 @@ class AmazonS3ResourceManager extends Component implements ResourceManagerInterf
 			'Bucket' => $this->bucket,
 			'Key' => $name,
 			'SourceFile' => $file->tempName,
-			'ACL' => CannedAcl::PUBLIC_READ // default to ACL public read
+			'ACL' => 'public-read'
 		], $options);
 
 		$this->getClient()->putObject($options);
@@ -132,6 +140,8 @@ class AmazonS3ResourceManager extends Component implements ResourceManagerInterf
 		if ($this->_client === null) {
 			$this->_client = S3Client::factory([
 				'credentials' => new Credentials($this->key, $this->secret),
+				'region' => $this->region,
+				'version' => $this->version,
 			]);
 		}
 		return $this->_client;
